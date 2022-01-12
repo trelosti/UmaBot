@@ -13,49 +13,77 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
+import java.io.File;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
-    ArrayDeque<String> images;
-    ArrayDeque<String> usedImages;
+    //    ArrayDeque<String> images;
+    //    ArrayDeque<String> usedImages;
     String previousMemeSrc = "";
+    String path = System.getProperty("user.dir");
+
 
     public void onReady(ReadyEvent event) {
-        System.setProperty("webdriver.chrome.driver", "D:\\java_projects\\UmaBot\\driver\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
         Guild guild = jda.getGuildById("800740503914020875");
 
-        WebDriver driver = new ChromeDriver();
-        //try {
-        driver.get("https://dtf.ru/kek");
-        WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
-        //WebElement target = button.findElement(By.("Популярное"));
-        Actions action = new Actions(driver);
-        // Perform click-and-hold action on the element
-        action.clickAndHold(button).release().build().perform();
-        WebElement todayButton = driver.findElement(By.linkText("За день"));
-        action.clickAndHold(todayButton).release().build().perform();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
 
-        WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
-        WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
-        String memSrc = meme.getAttribute("data-image-src");
+        Duration duration = Duration.between(now, ZonedDateTime.now());
+        long initDelay = duration.getSeconds();
 
-        EmbedBuilder builder;
 
-        if (!memSrc.isEmpty() && !memSrc.equals(previousMemeSrc)) {
-            builder = new EmbedBuilder()
-                    .setImage(memSrc)
-                    .setColor(Color.GREEN);
+        ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
+        schedulerGetMemes.scheduleAtFixedRate(() -> {
+                    WebDriver driver = new ChromeDriver();
+                    try {
+                        driver.get("https://dtf.ru/kek");
+                        System.out.println(driver.getPageSource());
 
-            guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
-            previousMemeSrc = memSrc;
-        }
+                        WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
+                        //WebElement target = button.findElement(By.("Популярное"));
+                        Actions action = new Actions(driver);
+                        // Perform click-and-hold action on the element
+                        action.clickAndHold(button).release().build().perform();
+                        WebElement todayButton = driver.findElement(By.linkText("За день"));
+                        action.clickAndHold(todayButton).release().build().perform();
 
-        //System.out.println(todayButton.getText());
-        //}
-//        finally {
-//            driver.quit();
-//        }
+                        WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
+                        WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
+                        String memSrc = meme.getAttribute("data-image-src");
+
+                        EmbedBuilder builder;
+
+                        if (!memSrc.isEmpty() && !memSrc.equals(previousMemeSrc)) {
+                            builder = new EmbedBuilder()
+                                    .setImage(memSrc)
+                                    .setColor(Color.GREEN);
+
+                            guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
+                            previousMemeSrc = memSrc;
+                        } else {
+                            guild.getTextChannelById("800740503914020879").sendMessage("copy").queue();
+                        }
+                    } finally {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        driver.close();
+                    }
+                },
+                initDelay,
+                10,
+                TimeUnit.SECONDS
+        );
 //        images = new ArrayDeque<>();
 //        usedImages = new ArrayDeque<>();
 //
