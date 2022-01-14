@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import com.fasterxml.jackson.databind.ObjectMapper; // version 2.11.1
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,14 +13,23 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class WeatherController extends ListenerAdapter {
-    public StringBuffer getWeather(String aKey, String aCity) {
+public class WeatherController {
+    private final String key;
+    private final String city;
+
+    public WeatherController(String city) {
+        //TODO: add key to resources;
+        this.key = "afef806ca4262c3ff14053d67e5f33a9";
+        this.city = city;
+    }
+
+    public StringBuffer getWeather() {
         StringBuffer shortForecast = null;
         BufferedReader reader;
         String line;
         StringBuffer response = new StringBuffer();
-        String key = "afef806ca4262c3ff14053d67e5f33a9";
-        String city = "Bishkek";
+//        String key = "afef806ca4262c3ff14053d67e5f33a9";
+//        String city = "Bishkek";
         try {
             URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + key + "&units=metric");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -64,7 +71,7 @@ public class WeatherController extends ListenerAdapter {
         }
     }
 
-    static StringBuffer parseWeatherJson(String content) {
+    private static StringBuffer parseWeatherJson(String content) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         mapper.setVisibility(VisibilityChecker.Std.defaultInstance().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
