@@ -42,7 +42,7 @@ public class Parser extends ListenerAdapter {
                     WebDriver driver = new ChromeDriver();
                     try {
                         driver.get("https://dtf.ru/kek");
-                        //System.out.println(driver.getPageSource());
+                        System.out.println(driver.getPageSource());
 
                         WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
                         Actions action = new Actions(driver);
