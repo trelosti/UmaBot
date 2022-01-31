@@ -4,7 +4,7 @@ public class Cell {
     boolean isOpened;
     boolean isFlagged;
 
-    Cell() {
+    public Cell() {
         isOpened = false;
         isFlagged = false;
     }
@@ -42,6 +42,13 @@ public class Cell {
         return ":green_square:";
     }
 
+    public boolean isOpened() {
+        return isOpened;
+    }
+
+    public boolean isFlagged() {
+        return isFlagged;
+    }
 
     void setOpened(boolean isOpened) {
         this.isOpened = isOpened;
