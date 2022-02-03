@@ -29,6 +29,7 @@ public class Parser extends ListenerAdapter {
 
     public void onReady(ReadyEvent event) {
         System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
+        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         JDA jda = event.getJDA();
         System.out.println(path);
         Guild guild = jda.getGuildById("800740503914020875");
@@ -39,9 +40,10 @@ public class Parser extends ListenerAdapter {
         long initDelay = duration.getSeconds();
 
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
-        options.setBinary(path + File.separator + "Chrome" + File.separator + "Application" + File.separator + "chrome.exe");
+        options.setBinary("/app/.apt/usr/bin/google-chrome");
 
         /*  Check for a new meme once in 20 seconds */
         ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
