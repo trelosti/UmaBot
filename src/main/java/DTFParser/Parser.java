@@ -10,12 +10,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
-import java.io.File;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,13 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
     String previousMemeSrc = "";
-    String path = System.getProperty("user.dir");
 
     public void onReady(ReadyEvent event) {
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
         JDA jda = event.getJDA();
-        System.out.println(path);
         Guild guild = jda.getGuildById("800740503914020875");
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
@@ -51,8 +47,6 @@ public class Parser extends ListenerAdapter {
                     WebDriver driver = new ChromeDriver(options);
                     try {
                         driver.get("https://dtf.ru/kek");
-
-                        //System.out.println(driver.getPageSource());
 
                         WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
                         Actions action = new Actions(driver);
@@ -74,8 +68,6 @@ public class Parser extends ListenerAdapter {
 
                             guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
                             previousMemeSrc = memSrc;
-                        } else {
-                            guild.getTextChannelById("800740503914020879").sendMessage("copy").queue();
                         }
                     } finally {
                         try {
