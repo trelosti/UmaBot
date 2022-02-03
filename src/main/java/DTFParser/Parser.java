@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
@@ -36,13 +38,19 @@ public class Parser extends ListenerAdapter {
         Duration duration = Duration.between(now, ZonedDateTime.now());
         long initDelay = duration.getSeconds();
 
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.setBinary(path + File.separator + "Chrome" + File.separator + "Application" + File.separator + "chrome.exe");
+
         /*  Check for a new meme once in 20 seconds */
         ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
         schedulerGetMemes.scheduleAtFixedRate(() -> {
-                    WebDriver driver = new ChromeDriver();
+                    WebDriver driver = new ChromeDriver(options);
                     try {
                         driver.get("https://dtf.ru/kek");
-                        System.out.println(driver.getPageSource());
+
+                        //System.out.println(driver.getPageSource());
 
                         WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
                         Actions action = new Actions(driver);
