@@ -37,9 +37,9 @@ public class Parser extends ListenerAdapter {
 
         ChromeOptions options = new ChromeOptions();
         options.setBinary("/app/.apt/usr/bin/google-chrome");
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
+        //options.addArguments("--headless");
+        //options.addArguments("--disable-gpu");
+        //options.addArguments("--no-sandbox");
 
         /*  Check for a new meme once in 20 seconds */
         ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
