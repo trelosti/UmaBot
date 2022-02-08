@@ -35,8 +35,7 @@ public class Parser extends ListenerAdapter {
         Duration duration = Duration.between(now, ZonedDateTime.now());
         long initDelay = duration.getSeconds();
 
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary("/app/.apt/usr/bin/google-chrome");
+
         //options.addArguments("--headless");
         //options.addArguments("--disable-gpu");
         //options.addArguments("--no-sandbox");
@@ -44,6 +43,8 @@ public class Parser extends ListenerAdapter {
         /*  Check for a new meme once in 20 seconds */
         ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
         schedulerGetMemes.scheduleAtFixedRate(() -> {
+                    ChromeOptions options = new ChromeOptions();
+                    options.setBinary("/app/.apt/usr/bin/google-chrome");
                     WebDriver driver = new ChromeDriver(options);
                     try {
                         driver.get("https://dtf.ru/kek");
@@ -81,7 +82,7 @@ public class Parser extends ListenerAdapter {
                     }
                 },
                 initDelay,
-                120,
+                40,
                 TimeUnit.SECONDS
         );
     }
