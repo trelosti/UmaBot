@@ -49,7 +49,7 @@ public class Parser extends ListenerAdapter {
                         driver.get("https://dtf.ru/kek");
                         System.out.println("Driver boot");
 
-                        while (true) {
+                        for (int i = 0; i < 100; i++) {
                             WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
                             Actions action = new Actions(driver);
                             action.clickAndHold(button).release().build().perform();
