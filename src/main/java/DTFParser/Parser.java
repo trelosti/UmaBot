@@ -42,8 +42,8 @@ public class Parser extends ListenerAdapter {
         //options.addArguments("--no-sandbox");
 
         /*  Check for a new meme once in 20 seconds */
-        ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
-        schedulerGetMemes.scheduleAtFixedRate(() -> {
+//        ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
+//        schedulerGetMemes.scheduleAtFixedRate(() -> {
                     WebDriver driver = new ChromeDriver(options);
                     try {
                         driver.get("https://dtf.ru/kek");
@@ -79,11 +79,11 @@ public class Parser extends ListenerAdapter {
                         }
                         driver.quit();
                     }
-                },
-                initDelay,
-                120,
-                TimeUnit.SECONDS
-        );
+//                },
+//                initDelay,
+//                120,
+//                TimeUnit.SECONDS
+//        );
     }
 }
 
