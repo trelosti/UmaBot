@@ -49,27 +49,35 @@ public class Parser extends ListenerAdapter {
                         driver.get("https://dtf.ru/kek");
                         System.out.println("Driver boot");
 
-                        WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
-                        Actions action = new Actions(driver);
-                        action.clickAndHold(button).release().build().perform();
-                        WebElement todayButton = driver.findElement(By.linkText("За день"));
-                        action.clickAndHold(todayButton).release().build().perform();
+                        while (true) {
+                            WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
+                            Actions action = new Actions(driver);
+                            action.clickAndHold(button).release().build().perform();
+                            WebElement todayButton = driver.findElement(By.linkText("За день"));
+                            action.clickAndHold(todayButton).release().build().perform();
 
-                        WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
-                        WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
-                        String memSrc = meme.getAttribute("data-image-src");
+                            WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
+                            WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
+                            String memSrc = meme.getAttribute("data-image-src");
 
-                        EmbedBuilder builder;
-                        System.out.println(memSrc);
+                            EmbedBuilder builder;
+                            System.out.println(memSrc);
 
-                        // Ignore if a new image is the same as a previous one
-                        if (!memSrc.isEmpty() && !memSrc.equals(previousMemeSrc)) {
-                            builder = new EmbedBuilder()
-                                    .setImage(memSrc)
-                                    .setColor(Color.GREEN);
+                            // Ignore if a new image is the same as a previous one
+                            if (!memSrc.isEmpty() && !memSrc.equals(previousMemeSrc)) {
+                                builder = new EmbedBuilder()
+                                        .setImage(memSrc)
+                                        .setColor(Color.GREEN);
 
-                            guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
-                            previousMemeSrc = memSrc;
+                                guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
+                                previousMemeSrc = memSrc;
+                            }
+
+                            try {
+                                Thread.sleep(5000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     } finally {
                         try {
