@@ -47,6 +47,7 @@ public class Parser extends ListenerAdapter {
                     WebDriver driver = new ChromeDriver(options);
                     try {
                         driver.get("https://dtf.ru/kek");
+                        System.out.println("Driver boot");
 
                         WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
                         Actions action = new Actions(driver);
@@ -59,6 +60,7 @@ public class Parser extends ListenerAdapter {
                         String memSrc = meme.getAttribute("data-image-src");
 
                         EmbedBuilder builder;
+                        System.out.println(memSrc);
 
                         // Ignore if a new image is the same as a previous one
                         if (!memSrc.isEmpty() && !memSrc.equals(previousMemeSrc)) {
@@ -79,7 +81,7 @@ public class Parser extends ListenerAdapter {
                     }
                 },
                 initDelay,
-                20,
+                120,
                 TimeUnit.SECONDS
         );
     }
