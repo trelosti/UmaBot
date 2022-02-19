@@ -11,7 +11,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.interactions.Actions;
 
 import java.awt.*;
 import java.time.Duration;
@@ -37,61 +36,48 @@ public class Parser extends ListenerAdapter {
 
         ChromeOptions options = new ChromeOptions();
         options.setBinary("/app/.apt/usr/bin/google-chrome");
-        //options.addArguments("--headless");
-        //options.addArguments("--disable-gpu");
-        //options.addArguments("--no-sandbox");
+        options.addArguments("--headless");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
 
         /*  Check for a new meme once in 20 seconds */
-//        ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
-//        schedulerGetMemes.scheduleAtFixedRate(() -> {
+        ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
+        schedulerGetMemes.scheduleAtFixedRate(() -> {
                     WebDriver driver = new ChromeDriver(options);
                     try {
-                        driver.get("https://dtf.ru/kek");
+                        driver.get("https://dtf.ru/kek/entries/top/day");
                         System.out.println("Driver boot");
 
-                        for (int i = 0; i < 100; i++) {
-                            WebElement button = driver.findElement(By.cssSelector("div.ui-rounded-button__link"));
-                            Actions action = new Actions(driver);
-                            action.clickAndHold(button).release().build().perform();
-                            WebElement todayButton = driver.findElement(By.linkText("За день"));
-                            action.clickAndHold(todayButton).release().build().perform();
+                        WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
+                        WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
+                        String memSrc = meme.getAttribute("data-image-src");
 
-                            WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
-                            WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
-                            String memSrc = meme.getAttribute("data-image-src");
+                        EmbedBuilder builder;
 
-                            EmbedBuilder builder;
-                            System.out.println(memSrc);
+                        // Ignore if a new image is the same as a previous one
+                        if (!memSrc.isEmpty() && !memSrc.equals(previousMemeSrc)) {
+                        builder = new EmbedBuilder()
+                                .setImage(memSrc)
+                                .setColor(Color.GREEN);
 
-                            // Ignore if a new image is the same as a previous one
-                            if (!memSrc.isEmpty() && !memSrc.equals(previousMemeSrc)) {
-                                builder = new EmbedBuilder()
-                                        .setImage(memSrc)
-                                        .setColor(Color.GREEN);
-
-                                guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
-                                previousMemeSrc = memSrc;
-                            }
-
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
+                        previousMemeSrc = memSrc;
+                        } else {
+                            System.out.println("copy");
                         }
                     } finally {
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         driver.quit();
                     }
-//                },
-//                initDelay,
-//                120,
-//                TimeUnit.SECONDS
-//        );
+                },
+                initDelay,
+                60,
+                TimeUnit.SECONDS
+        );
     }
 }
 
