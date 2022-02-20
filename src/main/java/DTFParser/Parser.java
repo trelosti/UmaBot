@@ -28,10 +28,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
-    String filePath = System.getProperty("user.dir") + File.separator + "resources" + File.separator + "usedMemes.txt";
+    String filePath = System.getProperty("/app") + File.separator + "resources" + File.separator + "usedMemes.txt";
     String lineSeparator = System.lineSeparator();
 
     public void onReady(ReadyEvent event) {
+        System.out.println(System.getProperty("user.dir"));
         System.out.println(filePath);
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
