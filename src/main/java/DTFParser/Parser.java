@@ -23,6 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
     ArrayList<String> usedMemes;
+    private final static String DATABASE_NAME = DatabaseInfo.getDatabaseName();
+    private final static String DATABASE_USERNAME = DatabaseInfo.getUsername();
+    private final static String DATABASE_PASSWORD = DatabaseInfo.getPassword();
+    DatabaseWorker databaseWorker = new DatabaseWorker(DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD);
 
     public void onReady(ReadyEvent event) {
         usedMemes = new ArrayList<>();
@@ -63,6 +67,7 @@ public class Parser extends ListenerAdapter {
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
                         WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
                         String memSrc = meme.getAttribute("data-image-src");
+                        databaseWorker.insertIntoTable("memes", "link", memSrc);
 
                         EmbedBuilder builder;
 
@@ -89,11 +94,20 @@ public class Parser extends ListenerAdapter {
                 TimeUnit.SECONDS
         );
 
-        schedulerGetMemes.scheduleAtFixedRate(() -> {
-                    usedMemes.clear();
-                },
+        schedulerGetMemes.scheduleAtFixedRate(() -> usedMemes.clear(),
                 clearDelay,
                 TimeUnit.DAYS.toSeconds(2),
                 TimeUnit.SECONDS);
     }
+
+//    private ArrayList<String> retrieveMemes() throws Exception {
+//        ArrayList<String> res = new ArrayList<>();
+//        Class.forName("org.postgresql.Driver");
+//        Connection con = DriverManager.getConnection(
+//                "jdbc:postgresql://localhost:5432/d2tidc6oas2oao",
+//                "jvoodihoknxbhs", "ea7de95b8d2bd64d31c2f002a50e4ebb633088034d0e853908166309e3ae73d1");
+//
+//
+//
+//    }
 }
