@@ -1,2 +1,2 @@
 # Project exclude paths
-!/src/main/java/DTFParser/DatabaseInfo.java
+/src/main/java/DTFParser/DatabaseInfo.java
