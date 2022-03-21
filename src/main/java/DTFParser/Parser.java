@@ -64,6 +64,7 @@ public class Parser extends ListenerAdapter {
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
                         WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
                         String memSrc = meme.getAttribute("data-image-src");
+                        System.out.println(memSrc);
 
                         EmbedBuilder builder;
 
