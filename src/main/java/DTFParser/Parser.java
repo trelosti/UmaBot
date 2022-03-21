@@ -38,13 +38,13 @@ public class Parser extends ListenerAdapter {
         Duration duration = Duration.between(now, ZonedDateTime.now());
         long initDelay = duration.getSeconds();
 
-        ZonedDateTime fileClearDelay = now.withHour(0).withMinute(0).withSecond(0);
+        ZonedDateTime tableClearDelay = now.withHour(0).withMinute(0).withSecond(0);
 
-        if (now.compareTo(fileClearDelay) > 0) {
-            fileClearDelay = fileClearDelay.plusDays(1);
+        if (now.compareTo(tableClearDelay) > 0) {
+            tableClearDelay = tableClearDelay.plusDays(1);
         }
 
-        Duration durationOfClear = Duration.between(now, fileClearDelay);
+        Duration durationOfClear = Duration.between(now, tableClearDelay);
         long clearDelay = durationOfClear.getSeconds();
 
         ChromeOptions options = new ChromeOptions();
