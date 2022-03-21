@@ -53,4 +53,13 @@ public class DatabaseWorker implements Recordable<String> {
 
         return exists;
     }
+
+    @Override
+    public void deleteAllRows(String tableName) {
+        try {
+            statement.executeUpdate(String.format("delete from %s", tableName));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

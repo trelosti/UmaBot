@@ -16,20 +16,17 @@ import java.awt.*;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
-    ArrayList<String> usedMemes;
     private final static String DATABASE_NAME = DatabaseInfo.getDatabaseName();
     private final static String DATABASE_USERNAME = DatabaseInfo.getUsername();
     private final static String DATABASE_PASSWORD = DatabaseInfo.getPassword();
     DatabaseWorker databaseWorker = new DatabaseWorker(DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD);
 
     public void onReady(ReadyEvent event) {
-        usedMemes = new ArrayList<>();
 
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
@@ -56,7 +53,7 @@ public class Parser extends ListenerAdapter {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
 
-        /*  Check for a new meme once in 20 seconds */
+        /*  Check for a new meme once in 60 seconds */
         ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
         schedulerGetMemes.scheduleAtFixedRate(() -> {
                     WebDriver driver = new ChromeDriver(options);
@@ -67,18 +64,17 @@ public class Parser extends ListenerAdapter {
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
                         WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
                         String memSrc = meme.getAttribute("data-image-src");
-                        databaseWorker.insertIntoTable("memes", "link", memSrc);
 
                         EmbedBuilder builder;
 
                         // Ignore if a new image is the same as a previous one
-                        if (!memSrc.isEmpty() && !usedMemes.contains(memSrc)) {
+                        if (!memSrc.isEmpty() && !databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
                             builder = new EmbedBuilder()
                                     .setImage(memSrc)
                                     .setColor(Color.GREEN);
 
                             guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
-                            usedMemes.add(memSrc);
+                            databaseWorker.insertIntoTable("memes", "link", memSrc);
                         }
                     } finally {
                         try {
@@ -94,20 +90,9 @@ public class Parser extends ListenerAdapter {
                 TimeUnit.SECONDS
         );
 
-        schedulerGetMemes.scheduleAtFixedRate(() -> usedMemes.clear(),
+        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
                 clearDelay,
-                TimeUnit.DAYS.toSeconds(2),
+                TimeUnit.DAYS.toSeconds(7),
                 TimeUnit.SECONDS);
     }
-
-//    private ArrayList<String> retrieveMemes() throws Exception {
-//        ArrayList<String> res = new ArrayList<>();
-//        Class.forName("org.postgresql.Driver");
-//        Connection con = DriverManager.getConnection(
-//                "jdbc:postgresql://localhost:5432/d2tidc6oas2oao",
-//                "jvoodihoknxbhs", "ea7de95b8d2bd64d31c2f002a50e4ebb633088034d0e853908166309e3ae73d1");
-//
-//
-//
-//    }
 }
