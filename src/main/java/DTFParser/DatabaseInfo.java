@@ -1,7 +1,7 @@
 package DTFParser;
 
 public final class DatabaseInfo {
-    private final static String DATABASE_NAME = "";
+    private final static String DATABASE_NAME = "check";
     private final static String USERNAME = "";
     private final static String PASSWORD = "";
 
