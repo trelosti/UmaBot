@@ -16,10 +16,12 @@ public class DatabaseWorker implements Recordable<String> {
         }
         try {
             Connection con = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/" + database,
+                    "jdbc:postgresql://ec2-54-170-212-187.eu-west-1.compute.amazonaws.com:5432/" + database,
                     username, password);
             this.statement = con.createStatement();
-
+            this.database = database;
+            this.username = username;
+            this.password = password;
 
         } catch (SQLException e) {
             e.printStackTrace();
