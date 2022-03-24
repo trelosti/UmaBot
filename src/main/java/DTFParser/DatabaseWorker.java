@@ -1,29 +1,22 @@
 package DTFParser;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.*;
 
 public class DatabaseWorker implements Recordable<String> {
-    private String database;
-    private String username;
-    private String password;
     private Statement statement;
 
-    DatabaseWorker(String database, String username, String password) {
+    DatabaseWorker() {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         try {
-            Connection con = DriverManager.getConnection(
-                    "jdbc:postgresql://ec2-54-170-212-187.eu-west-1.compute.amazonaws.com:5432/" + database,
-                    username, password);
+            Connection con = getConnection();
             this.statement = con.createStatement();
-            this.database = database;
-            this.username = username;
-            this.password = password;
-
-        } catch (SQLException e) {
+        } catch (SQLException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -63,5 +56,20 @@ public class DatabaseWorker implements Recordable<String> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Connection getConnection() throws URISyntaxException, SQLException {
+        URI dbUri = null;
+        try {
+            dbUri = new URI(System.getenv("DATABASE_URL"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+
+        return DriverManager.getConnection(dbUrl, username, password);
     }
 }

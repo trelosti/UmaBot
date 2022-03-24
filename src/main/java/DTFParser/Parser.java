@@ -21,10 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
-    private final static String DATABASE_NAME = DatabaseInfo.getDatabaseName();
-    private final static String DATABASE_USERNAME = DatabaseInfo.getUsername();
-    private final static String DATABASE_PASSWORD = DatabaseInfo.getPassword();
-    DatabaseWorker databaseWorker = new DatabaseWorker(DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD);
+    DatabaseWorker databaseWorker = new DatabaseWorker();
 
     public void onReady(ReadyEvent event) {
 
@@ -91,9 +88,9 @@ public class Parser extends ListenerAdapter {
                 TimeUnit.SECONDS
         );
 
-        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
-                clearDelay,
-                TimeUnit.DAYS.toSeconds(7),
-                TimeUnit.SECONDS);
+//        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
+//                clearDelay,
+//                TimeUnit.DAYS.toSeconds(7),
+//                TimeUnit.SECONDS);
     }
 }
