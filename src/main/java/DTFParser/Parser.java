@@ -16,12 +16,15 @@ import java.awt.*;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
+    Stack<String> links = new Stack<>();
 
     public void onReady(ReadyEvent event) {
 
@@ -59,20 +62,29 @@ public class Parser extends ListenerAdapter {
                         System.out.println("Driver boot");
 
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
-                        WebElement meme = page.findElement(By.cssSelector("div.andropov_image"));
-                        String memSrc = meme.getAttribute("data-image-src");
-                        System.out.println(memSrc);
+                        List<WebElement> memes = page.findElements(By.cssSelector("div.andropov_image"));
+
+                        for (WebElement e : memes) {
+                            String memSrc = e.getAttribute("data-image-src");
+                            System.out.println(memSrc);
+                            if (!databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
+                                links.push(memSrc);
+                            }
+                        }
 
                         EmbedBuilder builder;
 
-                        // Ignore if a new image is the same as a previous one
-                        if (!memSrc.isEmpty() && !databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
-                            builder = new EmbedBuilder()
-                                    .setImage(memSrc)
-                                    .setColor(Color.GREEN);
+                        for (String memSrc : links) {
+                            // Ignore if a new image is the same as a previous one
+                            if (!memSrc.isEmpty() && !databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
+                                builder = new EmbedBuilder()
+                                        .setImage(memSrc)
+                                        .setColor(Color.GREEN);
 
-                            guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
-                            databaseWorker.insertIntoTable("memes", "link", memSrc);
+                                guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
+                                databaseWorker.insertIntoTable("memes", "link", memSrc);
+                                links.pop();
+                            }
                         }
                     } finally {
                         try {
@@ -84,13 +96,13 @@ public class Parser extends ListenerAdapter {
                     }
                 },
                 initDelay,
-                60,
+                TimeUnit.MINUTES.toSeconds(5),
                 TimeUnit.SECONDS
         );
 
-//        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
-//                clearDelay,
-//                TimeUnit.DAYS.toSeconds(7),
-//                TimeUnit.SECONDS);
+        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
+                clearDelay,
+                TimeUnit.DAYS.toSeconds(7),
+                TimeUnit.SECONDS);
     }
 }
