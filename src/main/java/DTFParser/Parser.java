@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -66,8 +67,8 @@ public class Parser extends ListenerAdapter {
 
                         for (WebElement e : memes) {
                             String memSrc = e.getAttribute("data-image-src");
-                            System.out.println(memSrc);
                             if (!databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
+                                System.out.println(memSrc);
                                 links.push(memSrc);
                             }
                         }
@@ -86,6 +87,8 @@ public class Parser extends ListenerAdapter {
                                 links.pop();
                             }
                         }
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
                     } finally {
                         try {
                             Thread.sleep(2000);
@@ -100,9 +103,9 @@ public class Parser extends ListenerAdapter {
                 TimeUnit.SECONDS
         );
 
-        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
-                clearDelay,
-                TimeUnit.DAYS.toSeconds(7),
-                TimeUnit.SECONDS);
+//        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
+//                clearDelay,
+//                TimeUnit.DAYS.toSeconds(7),
+//                TimeUnit.SECONDS);
     }
 }
