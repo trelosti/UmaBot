@@ -26,14 +26,13 @@ import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
-    String path = System.getProperty("user.dir");
-
+    //String path = System.getProperty("user.dir");
 
     public void onReady(ReadyEvent event) {
 
-//        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
-//        System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
-        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
+        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
+        System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
+        //System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
         Guild guild = jda.getGuildById("800740503914020875");
 
@@ -44,8 +43,6 @@ public class Parser extends ListenerAdapter {
         Duration duration = Duration.between(now, ZonedDateTime.now());
         long initDelay = duration.getSeconds();
 
-        //ZonedDateTime tableClearDelay = now.withHour(0).withMinute(0).withSecond(0);
-
         if (now.compareTo(tableClearDelay) > 0) {
             tableClearDelay = tableClearDelay.plusDays(1);
         }
@@ -54,9 +51,9 @@ public class Parser extends ListenerAdapter {
         long clearDelay = durationOfClear.getSeconds();
 
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
+        //options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
 
-//        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.setBinary("/app/.apt/usr/bin/google-chrome");
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
@@ -105,16 +102,18 @@ public class Parser extends ListenerAdapter {
                     }
                 },
                 initDelay,
-                20,
+                60,
                 TimeUnit.SECONDS
         );
 
-//        schedulerGetMemes.scheduleAtFixedRate(() -> {
-//            databaseWorker.deleteAndResetAllRows("memes", "id");
-//                    System.out.println("CLEARED");
-//                },
-//                clearDelay,
-//                30,
-//                TimeUnit.SECONDS);
+        schedulerGetMemes.scheduleAtFixedRate(() -> {
+                    if (databaseWorker.getCountOfRows("public", "memes") > 1) {
+                        databaseWorker.deleteAndResetAllRows("memes", "id");
+                        System.out.println("CLEARED");
+                    }
+                },
+                clearDelay,
+                TimeUnit.DAYS.toSeconds( 14),
+                TimeUnit.SECONDS);
     }
 }

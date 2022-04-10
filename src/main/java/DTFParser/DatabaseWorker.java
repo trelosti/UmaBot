@@ -1,5 +1,6 @@
 package DTFParser;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 
@@ -89,36 +90,39 @@ public class DatabaseWorker implements IRecordable<String> {
         }
     }
 
-//    @Override
-//    public int getCountOfRows(String schemaName, String tableName) {
-//        Statement statement;
-//        ResultSet res = null;
-//        try {
-//            statement = con.createStatement();
-//            res = statement.executeQuery(String.format("SELECT count(*) AS exact_count FROM %s.%s;", schemaName, tableName));
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return res;
-//   }
+    @Override
+    public int getCountOfRows(String schemaName, String tableName) {
+        Statement statement;
+        ResultSet res;
+        int count = 0;
+        try {
+            statement = con.createStatement();
+            res = statement.executeQuery(String.format("SELECT count(*) AS exact_count FROM %s.%s;", schemaName, tableName));
+            if (res.next()) {
+                count = res.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+   }
 
     private static Connection getConnection() throws URISyntaxException, SQLException {
-//        URI dbUri = null;
-//        try {
-//            dbUri = new URI(System.getenv("DATABASE_URL"));
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
+        URI dbUri = null;
+        try {
+            dbUri = new URI(System.getenv("DATABASE_URL"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
-//        String username = dbUri.getUserInfo().split(":")[0];
-//        String password = dbUri.getUserInfo().split(":")[1];
-//        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
 
-        //return DriverManager.getConnection(dbUrl, username, password);
-        return DriverManager.getConnection(
-                "jdbc:postgresql://ec2-54-170-212-187.eu-west-1.compute.amazonaws.com:5432/" + "d2tidc6oas2oao",
-                "jvoodihoknxbhs", "ea7de95b8d2bd64d31c2f002a50e4ebb633088034d0e853908166309e3ae73d1");
+        return DriverManager.getConnection(dbUrl, username, password);
+//        return DriverManager.getConnection(
+//                "jdbc:postgresql://ec2-54-170-212-187.eu-west-1.compute.amazonaws.com:5432/" + "d2tidc6oas2oao",
+//                "jvoodihoknxbhs", "ea7de95b8d2bd64d31c2f002a50e4ebb633088034d0e853908166309e3ae73d1");
     }
 }
