@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import weather.ForecastSender;
-import weather.WeatherController;
 
 import javax.security.auth.login.LoginException;
 

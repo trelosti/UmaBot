@@ -1,11 +1,9 @@
 package DTFParser;
 
-import javax.swing.plaf.nimbus.State;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 
-public class DatabaseWorker implements Recordable<String> {
+public class DatabaseWorker implements IRecordable<String> {
     Connection con;
 
     DatabaseWorker() {
@@ -16,6 +14,11 @@ public class DatabaseWorker implements Recordable<String> {
         }
         try {
             con = getConnection();
+//            if (con != null) {
+//                System.out.println("You successfully connected to database now");
+//            } else {
+//                System.out.println("Failed to make connection to database");
+//            }
         } catch (SQLException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -53,7 +56,9 @@ public class DatabaseWorker implements Recordable<String> {
         try {
             statement = con.createStatement();
             rs = statement.executeQuery(String.format("select true from %s where %s like '%s'", tableName, rowName, value));
-            exists = rs.getBoolean(1);
+            if (rs.next()) {
+                exists = rs.getBoolean(1);
+            }
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -72,28 +77,48 @@ public class DatabaseWorker implements Recordable<String> {
     }
 
     @Override
-    public void deleteAllRows(String tableName) {
+    public void deleteAndResetAllRows(String tableName, String columnName) {
         Statement statement;
         try {
             statement = con.createStatement();
             statement.executeUpdate(String.format("delete from %s", tableName));
+            statement.executeUpdate(String.format("alter sequence %s_%s_seq RESTART WITH 1", tableName, columnName));
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+//    @Override
+//    public int getCountOfRows(String schemaName, String tableName) {
+//        Statement statement;
+//        ResultSet res = null;
+//        try {
+//            statement = con.createStatement();
+//            res = statement.executeQuery(String.format("SELECT count(*) AS exact_count FROM %s.%s;", schemaName, tableName));
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return res;
+//   }
+
     private static Connection getConnection() throws URISyntaxException, SQLException {
-        URI dbUri = null;
-        try {
-            dbUri = new URI(System.getenv("DATABASE_URL"));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+//        URI dbUri = null;
+//        try {
+//            dbUri = new URI(System.getenv("DATABASE_URL"));
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
 
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+//        String username = dbUri.getUserInfo().split(":")[0];
+//        String password = dbUri.getUserInfo().split(":")[1];
+//        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
 
-        return DriverManager.getConnection(dbUrl, username, password);
+        //return DriverManager.getConnection(dbUrl, username, password);
+        return DriverManager.getConnection(
+                "jdbc:postgresql://ec2-54-170-212-187.eu-west-1.compute.amazonaws.com:5432/" + "d2tidc6oas2oao",
+                "jvoodihoknxbhs", "ea7de95b8d2bd64d31c2f002a50e4ebb633088034d0e853908166309e3ae73d1");
     }
 }

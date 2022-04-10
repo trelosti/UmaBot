@@ -2,8 +2,9 @@ package DTFParser;
 
 import java.sql.SQLException;
 
-public interface Recordable<T> {
+public interface IRecordable<T> {
     int insertIntoTable(String tableName, String rowName, T value) throws SQLException;
     boolean checkIfValueExists(String tableName, String rowName, T value) throws SQLException;
-    void deleteAllRows(String tableName);
+    void deleteAndResetAllRows(String tableName, String columnName);
+    //int getCountOfRows(String schema, String tableName);
 }

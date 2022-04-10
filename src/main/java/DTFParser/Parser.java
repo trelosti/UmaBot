@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.awt.*;
+import java.io.File;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -25,21 +26,25 @@ import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
-    Stack<String> links = new Stack<>();
+    String path = System.getProperty("user.dir");
+
 
     public void onReady(ReadyEvent event) {
 
-        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
-        System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
+//        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
+//        System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
+        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
         Guild guild = jda.getGuildById("800740503914020875");
+
+        ZonedDateTime tableClearDelay = ZonedDateTime.now(ZoneId.systemDefault());
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
 
         Duration duration = Duration.between(now, ZonedDateTime.now());
         long initDelay = duration.getSeconds();
 
-        ZonedDateTime tableClearDelay = now.withHour(0).withMinute(0).withSecond(0);
+        //ZonedDateTime tableClearDelay = now.withHour(0).withMinute(0).withSecond(0);
 
         if (now.compareTo(tableClearDelay) > 0) {
             tableClearDelay = tableClearDelay.plusDays(1);
@@ -49,10 +54,14 @@ public class Parser extends ListenerAdapter {
         long clearDelay = durationOfClear.getSeconds();
 
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
+
+//        options.setBinary("/app/.apt/usr/bin/google-chrome");
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
+
+        Stack<String> links = new Stack<>();
 
         /*  Check for a new meme once in 60 seconds */
         ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
@@ -68,7 +77,7 @@ public class Parser extends ListenerAdapter {
                         for (WebElement e : memes) {
                             String memSrc = e.getAttribute("data-image-src");
                             if (!databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
-                                System.out.println(memSrc);
+                                //System.out.println(memSrc);
                                 links.push(memSrc);
                             }
                         }
@@ -84,28 +93,28 @@ public class Parser extends ListenerAdapter {
 
                                 guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
                                 databaseWorker.insertIntoTable("memes", "link", memSrc);
-                                links.pop();
+                                break;
                             }
                         }
+
+                        links.clear();
                     } catch (SQLException throwables) {
                         throwables.printStackTrace();
                     } finally {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         driver.quit();
                     }
                 },
                 initDelay,
-                TimeUnit.MINUTES.toSeconds(5),
+                20,
                 TimeUnit.SECONDS
         );
 
-//        schedulerGetMemes.scheduleAtFixedRate(() -> databaseWorker.deleteAllRows("memes"),
+//        schedulerGetMemes.scheduleAtFixedRate(() -> {
+//            databaseWorker.deleteAndResetAllRows("memes", "id");
+//                    System.out.println("CLEARED");
+//                },
 //                clearDelay,
-//                TimeUnit.DAYS.toSeconds(7),
+//                30,
 //                TimeUnit.SECONDS);
     }
 }
