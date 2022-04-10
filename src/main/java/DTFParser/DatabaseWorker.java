@@ -62,6 +62,7 @@ public class DatabaseWorker implements IRecordable<String> {
             }
         }
         catch (SQLException e) {
+            System.out.println("fail check");
             e.printStackTrace();
         }
 
