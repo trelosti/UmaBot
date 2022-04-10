@@ -43,11 +43,7 @@ public class Parser extends ListenerAdapter {
         Duration duration = Duration.between(now, ZonedDateTime.now());
         long initDelay = duration.getSeconds();
 
-        if (now.compareTo(tableClearDelay) > 0) {
-            tableClearDelay = tableClearDelay.plusDays(1);
-        }
-
-        Duration durationOfClear = Duration.between(now, tableClearDelay);
+        Duration durationOfClear = Duration.between(ZonedDateTime.now(), tableClearDelay);
         long clearDelay = durationOfClear.getSeconds();
 
         ChromeOptions options = new ChromeOptions();
