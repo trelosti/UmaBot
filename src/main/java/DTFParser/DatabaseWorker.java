@@ -113,7 +113,7 @@ public class DatabaseWorker implements IRecordable<String> {
     private static Connection getConnection() throws URISyntaxException, SQLException {
         URI dbUri = null;
         try {
-            dbUri = new URI(System.getenv("DATABASE_URL"));
+            dbUri = new URI(System.getenv("JDBC_DATABASE_URL"));
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
