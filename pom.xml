@@ -65,11 +65,11 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>LATEST</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.seleniumhq.selenium</groupId>-->
+<!--            <artifactId>selenium-java</artifactId>-->
+<!--            <version>LATEST</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities</artifactId>
@@ -103,6 +103,5 @@
             <artifactId>postgresql</artifactId>
             <version>42.3.3</version>
         </dependency>
-
     </dependencies>
 </project>
