@@ -61,6 +61,7 @@ public class Parser extends ListenerAdapter {
                     WebDriver driver = new ChromeDriver(options);
                     try {
                         driver.get("https://dtf.ru/kek/entries/top/day");
+                        driver.manage().window().maximize();
                         System.out.println("Driver boot");
 
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
