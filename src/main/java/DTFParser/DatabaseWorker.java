@@ -15,11 +15,11 @@ public class DatabaseWorker implements IRecordable<String> {
         }
         try {
             con = getConnection();
-//            if (con != null) {
-//                System.out.println("You successfully connected to database now");
-//            } else {
-//                System.out.println("Failed to make connection to database");
-//            }
+            if (con != null) {
+                System.out.println("You successfully connected to database now");
+            } else {
+                System.out.println("Failed to make connection to database");
+            }
         } catch (SQLException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -51,6 +51,7 @@ public class DatabaseWorker implements IRecordable<String> {
 
     @Override
     public boolean checkIfValueExists(String tableName, String rowName, String value) throws SQLException {
+        System.out.println("try to check");
         boolean exists = false;
         Statement statement = null;
         ResultSet rs = null;
