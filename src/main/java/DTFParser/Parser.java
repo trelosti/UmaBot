@@ -29,7 +29,6 @@ public class Parser extends ListenerAdapter {
     //String path = System.getProperty("user.dir");
 
     public void onReady(ReadyEvent event) {
-
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
         //System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
@@ -70,7 +69,7 @@ public class Parser extends ListenerAdapter {
                         for (WebElement e : memes) {
                             String memSrc = e.getAttribute("data-image-src");
                             if (!databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
-                                //System.out.println(memSrc);
+                                System.out.println(memSrc);
                                 links.push(memSrc);
                             }
                         }
