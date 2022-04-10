@@ -49,7 +49,7 @@ public class Parser extends ListenerAdapter {
         //options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
 
         options.setBinary("/app/.apt/usr/bin/google-chrome");
-        options.addArguments("--headless");
+        //options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
 
