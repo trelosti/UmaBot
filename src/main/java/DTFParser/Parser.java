@@ -61,7 +61,7 @@ public class Parser extends ListenerAdapter {
         schedulerGetMemes.scheduleAtFixedRate(() -> {
                     WebDriver driver = new ChromeDriver(options);
                     try {
-                        driver.manage().window().minimize();
+                        //driver.manage().window().minimize();
                         driver.get("https://dtf.ru/kek/entries/top/day");
                         System.out.println("Driver boot");
 
