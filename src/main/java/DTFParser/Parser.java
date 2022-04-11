@@ -26,12 +26,12 @@ import java.util.concurrent.TimeUnit;
 
 public class Parser extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
-    //String path = System.getProperty("user.dir");
+//    String path = System.getProperty("user.dir");
 
     public void onReady(ReadyEvent event) {
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
-        //System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
+//        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
         Guild guild = jda.getGuildById("800740503914020875");
 
@@ -49,7 +49,7 @@ public class Parser extends ListenerAdapter {
         //options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
 
         options.setBinary("/app/.apt/usr/bin/google-chrome");
-        //options.addArguments("--headless");
+        options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
 
@@ -60,6 +60,7 @@ public class Parser extends ListenerAdapter {
 //        schedulerGetMemes.scheduleAtFixedRate(() -> {
                     WebDriver driver = new ChromeDriver(options);
                     try {
+                        //driver.manage().window().maximize();
                         driver.get("https://dtf.ru/kek/entries/top/day");
                         System.out.println("Driver boot");
 
@@ -68,9 +69,11 @@ public class Parser extends ListenerAdapter {
 
                         for (WebElement e : memes) {
                             String memSrc = e.getAttribute("data-image-src");
-                            if (!databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
-                                System.out.println(memSrc);
-                                links.push(memSrc);
+                            if (!memSrc.isEmpty()) {
+                                if (!databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
+                                    System.out.println(memSrc);
+                                    links.push(memSrc);
+                                }
                             }
                         }
 
