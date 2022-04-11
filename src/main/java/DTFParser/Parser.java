@@ -57,11 +57,11 @@ public class Parser extends ListenerAdapter {
         Stack<String> links = new Stack<>();
 
         /*  Check for a new meme once in 60 seconds */
-//        ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
-//        schedulerGetMemes.scheduleAtFixedRate(() -> {
+        ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
+        schedulerGetMemes.scheduleAtFixedRate(() -> {
                     WebDriver driver = new ChromeDriver(options);
                     try {
-                        //driver.manage().window().maximize();
+                        driver.manage().window().minimize();
                         driver.get("https://dtf.ru/kek/entries/top/day");
                         System.out.println("Driver boot");
 
@@ -99,20 +99,20 @@ public class Parser extends ListenerAdapter {
                     } finally {
                         driver.quit();
                     }
-//                },
-//                initDelay,
-//                60,
-//                TimeUnit.SECONDS
-//        );
+                },
+                initDelay,
+                60,
+                TimeUnit.SECONDS
+        );
 
-//        schedulerGetMemes.scheduleAtFixedRate(() -> {
-//                    if (databaseWorker.getCountOfRows("public", "memes") > 1) {
-//                        databaseWorker.deleteAndResetAllRows("memes", "id");
-//                        System.out.println("CLEARED");
-//                    }
-//                },
-//                clearDelay,
-//                TimeUnit.DAYS.toSeconds( 14),
-//                TimeUnit.SECONDS);
+        schedulerGetMemes.scheduleAtFixedRate(() -> {
+                    if (databaseWorker.getCountOfRows("public", "memes") > 1) {
+                        databaseWorker.deleteAndResetAllRows("memes", "id");
+                        System.out.println("CLEARED");
+                    }
+                },
+                clearDelay,
+                TimeUnit.DAYS.toSeconds( 14),
+                TimeUnit.SECONDS);
     }
 }
