@@ -52,6 +52,7 @@ public class Parser extends ListenerAdapter {
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
         Stack<String> links = new Stack<>();
 
