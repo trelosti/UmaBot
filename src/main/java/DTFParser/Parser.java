@@ -111,7 +111,7 @@ public class Parser extends ListenerAdapter {
         );
 
         schedulerGetMemes.scheduleAtFixedRate(() -> {
-                    if (databaseWorker.getCountOfRows("public", "memes") > 1) {
+                    if (databaseWorker.getCountOfRows("public", "memes") > 1000) {
                         databaseWorker.deleteAndResetAllRows("memes", "id");
                         System.out.println("CLEARED");
                     }
