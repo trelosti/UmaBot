@@ -1,4 +1,4 @@
-import DTFParser.Parser;
+import DTFParser.MemeSupplier;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import minesweeper.Game;
@@ -24,7 +24,7 @@ public class Main extends ListenerAdapter {
         CommandClient client = builder.build();
 
 
-        jdaBuilder.addEventListeners(new Parser());
+        jdaBuilder.addEventListeners(new MemeSupplier());
         jdaBuilder.addEventListeners(client);
         jdaBuilder.addEventListeners(new Game());
 
@@ -33,5 +33,6 @@ public class Main extends ListenerAdapter {
         } catch (LoginException e) {
             e.printStackTrace();
         }
+
     }
 }

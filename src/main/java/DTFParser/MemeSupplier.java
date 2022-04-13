@@ -13,8 +13,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.awt.*;
-import java.io.File;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -24,7 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Parser extends ListenerAdapter {
+public class MemeSupplier extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
 //    String path = System.getProperty("user.dir");
 
@@ -54,7 +52,7 @@ public class Parser extends ListenerAdapter {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
 
-        Stack<String> links = new Stack<>();
+        Stack<MemePair> links = new Stack<>();
 
         /*  Check for a new meme once in 60 seconds */
         ScheduledExecutorService schedulerGetMemes = Executors.newScheduledThreadPool(1);
@@ -66,29 +64,36 @@ public class Parser extends ListenerAdapter {
                         System.out.println("Driver boot");
 
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
-                        List<WebElement> memes = page.findElements(By.cssSelector("div.andropov_image"));
+                        List<WebElement> contents = page.findElements(By.cssSelector("div.content-container"));
+                        //List<WebElement> memes = page.findElements(By.cssSelector("div.andropov_image"));
 
-                        for (WebElement e : memes) {
-                            String memSrc = e.getAttribute("data-image-src");
-                            if (!memSrc.isEmpty()) {
-                                if (!databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
-                                    System.out.println(memSrc);
-                                    links.push(memSrc);
+                        for (WebElement e : contents) {
+                            String memeTitle = e.findElement(By.cssSelector("div.content-title"))
+                                               .getText();
+
+                            String memeSrc = e.findElement(By.cssSelector("div.andropov_image"))
+                                             .getAttribute("data-image-src");
+
+                            if (!memeSrc.isEmpty()) {
+                                if (!databaseWorker.checkIfValueExists("memes", "link", memeSrc)) {
+                                    System.out.println(memeSrc);
+                                    links.push(MemePair.makeMemePair(memeTitle, memeSrc));
                                 }
                             }
                         }
 
                         EmbedBuilder builder;
 
-                        for (String memSrc : links) {
+                        for (MemePair pair : links) {
                             // Ignore if a new image is the same as a previous one
-                            if (!memSrc.isEmpty() && !databaseWorker.checkIfValueExists("memes", "link", memSrc)) {
+                            if (!pair.src.isEmpty() && !databaseWorker.checkIfValueExists("memes", "link", pair.src)) {
                                 builder = new EmbedBuilder()
-                                        .setImage(memSrc)
+                                        .setTitle(pair.title)
+                                        .setImage(pair.src)
                                         .setColor(Color.GREEN);
 
                                 guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
-                                databaseWorker.insertIntoTable("memes", "link", memSrc);
+                                databaseWorker.insertIntoTable("memes", "link", pair.src);
                                 break;
                             }
                         }
