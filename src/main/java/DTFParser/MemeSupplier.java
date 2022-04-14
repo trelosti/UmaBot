@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.awt.*;
+import java.io.File;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -24,12 +25,12 @@ import java.util.concurrent.TimeUnit;
 
 public class MemeSupplier extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
-//    String path = System.getProperty("user.dir");
+    //String path = System.getProperty("user.dir");
 
     public void onReady(ReadyEvent event) {
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
-//        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
+        //System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
         Guild guild = jda.getGuildById("800740503914020875");
 
@@ -68,11 +69,17 @@ public class MemeSupplier extends ListenerAdapter {
                         //List<WebElement> memes = page.findElements(By.cssSelector("div.andropov_image"));
 
                         for (WebElement e : contents) {
-                            String memeTitle = e.findElement(By.cssSelector("div.content-title"))
-                                               .getText();
+                            String memeTitle = "";
+                            String memeSrc = "";
+                            if (!e.findElements(By.cssSelector("div.content-title")).isEmpty()) {
+                                memeTitle = e.findElement(By.cssSelector("div.content-title"))
+                                        .getText();
+                            }
 
-                            String memeSrc = e.findElement(By.cssSelector("div.andropov_image"))
-                                             .getAttribute("data-image-src");
+                            if (!e.findElements(By.cssSelector("div.andropov_image")).isEmpty()) {
+                                memeSrc = e.findElement(By.cssSelector("div.andropov_image"))
+                                        .getAttribute("data-image-src");
+                            }
 
                             if (!memeSrc.isEmpty()) {
                                 if (!databaseWorker.checkIfValueExists("memes", "link", memeSrc)) {
@@ -88,7 +95,7 @@ public class MemeSupplier extends ListenerAdapter {
                             // Ignore if a new image is the same as a previous one
                             if (!pair.src.isEmpty() && !databaseWorker.checkIfValueExists("memes", "link", pair.src)) {
                                 builder = new EmbedBuilder()
-                                        .setTitle(pair.title)
+                                        .setTitle(pair.title.isEmpty() ? " " : pair.title)
                                         .setImage(pair.src)
                                         .setColor(Color.GREEN);
 

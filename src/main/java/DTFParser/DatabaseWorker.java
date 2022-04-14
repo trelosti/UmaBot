@@ -111,21 +111,11 @@ public class DatabaseWorker implements IRecordable<String> {
    }
 
     private static Connection getConnection() throws URISyntaxException, SQLException {
-//        URI dbUri = null;
-//        try {
-//            dbUri = new URI(System.getenv("DATABASE_URL"));
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-//
-//        String username = dbUri.getUserInfo().split(":")[0];
-//        String password = dbUri.getUserInfo().split(":")[1];
-//        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
-//
-//        System.out.println("connected");
-//        return DriverManager.getConnection(dbUrl, username, password);
-
         String dbUrl = System.getenv("JDBC_DATABASE_URL");
         return DriverManager.getConnection(dbUrl);
+
+//        return DriverManager.getConnection(
+//                "jdbc:postgresql://ec2-54-170-212-187.eu-west-1.compute.amazonaws.com:5432/" + "d2tidc6oas2oao",
+//                "jvoodihoknxbhs", "ea7de95b8d2bd64d31c2f002a50e4ebb633088034d0e853908166309e3ae73d1");
     }
 }
