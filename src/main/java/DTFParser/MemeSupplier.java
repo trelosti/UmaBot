@@ -25,14 +25,18 @@ import java.util.concurrent.TimeUnit;
 
 public class MemeSupplier extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
-    //String path = System.getProperty("user.dir");
+    final static String GUILD_ID = System.getenv("DISCORD_GUILD_ID");
+    final static String MEME_CHANNEL_ID = System.getenv("MEME_CHANNEL_ID");
+//    String path = System.getProperty("user.dir");
 
     public void onReady(ReadyEvent event) {
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
-        //System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
+        System.out.println(GUILD_ID);
+        System.out.println(MEME_CHANNEL_ID);
+//        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
-        Guild guild = jda.getGuildById("800740503914020875");
+        Guild guild = jda.getGuildById(GUILD_ID);
 
         ZonedDateTime tableClearDelay = ZonedDateTime.now(ZoneId.systemDefault());
 
@@ -44,14 +48,14 @@ public class MemeSupplier extends ListenerAdapter {
         Duration durationOfClear = Duration.between(ZonedDateTime.now(), tableClearDelay);
         long clearDelay = durationOfClear.getSeconds();
 
-        ChromeOptions options = new ChromeOptions();
-        //options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
+        ChromeOptions options = new ChromeOptions()
+                .setBinary("/app/.apt/usr/bin/google-chrome")
+                .addArguments("--headless")
+                .addArguments("--disable-gpu")
+                .addArguments("--no-sandbox")
+                .addArguments("--disable-dev-shm-usage");
 
-        options.setBinary("/app/.apt/usr/bin/google-chrome");
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+//        options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
 
         Stack<MemePair> links = new Stack<>();
 
@@ -99,7 +103,7 @@ public class MemeSupplier extends ListenerAdapter {
                                         .setImage(pair.src)
                                         .setColor(Color.GREEN);
 
-                                guild.getTextChannelById("800740503914020879").sendMessage(builder.build()).queue();
+                                guild.getTextChannelById(MEME_CHANNEL_ID).sendMessage(builder.build()).queue();
                                 databaseWorker.insertIntoTable("memes", "link", pair.src);
                                 break;
                             }
