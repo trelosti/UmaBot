@@ -63,9 +63,7 @@ public class MemeSupplier extends ListenerAdapter {
                     try {
                         //driver.manage().window().minimize();
                         driver.get("https://dtf.ru/kek/entries/top/day");
-                        System.out.println("Driver boot");
-                        System.out.println(GUILD_ID);
-                        System.out.println(MEME_CHANNEL_ID);
+                        System.out.println("Driver boot success");
 
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
                         List<WebElement> contents = page.findElements(By.cssSelector("div.content-container"));
