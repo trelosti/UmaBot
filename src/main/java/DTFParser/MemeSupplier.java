@@ -31,8 +31,6 @@ public class MemeSupplier extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
-        System.out.println(GUILD_ID);
-        System.out.println(MEME_CHANNEL_ID);
 //        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
         Guild guild = jda.getGuildById(GUILD_ID);
@@ -66,6 +64,8 @@ public class MemeSupplier extends ListenerAdapter {
                         //driver.manage().window().minimize();
                         driver.get("https://dtf.ru/kek/entries/top/day");
                         System.out.println("Driver boot");
+                        System.out.println(GUILD_ID);
+                        System.out.println(MEME_CHANNEL_ID);
 
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
                         List<WebElement> contents = page.findElements(By.cssSelector("div.content-container"));
