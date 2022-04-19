@@ -62,7 +62,7 @@ public class MemeSupplier extends ListenerAdapter {
                     WebDriver driver = new ChromeDriver(options);
                     try {
                         //driver.manage().window().minimize();
-                        driver.get("https://dtf.ru/kek/entries/top/week");
+                        driver.get("https://dtf.ru/kek/entries/top/day");
                         System.out.println("Driver boot success");
                         System.out.println(GUILD_ID);
                         System.out.println(MEME_CHANNEL_ID);
