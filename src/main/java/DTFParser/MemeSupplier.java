@@ -26,12 +26,10 @@ public class MemeSupplier extends ListenerAdapter {
     DatabaseWorker databaseWorker = new DatabaseWorker();
     final static String GUILD_ID = System.getenv("DISCORD_GUILD_ID");
     final static String MEME_CHANNEL_ID = System.getenv("MEME_CHANNEL_ID");
-//    String path = System.getProperty("user.dir");
 
     public void onReady(ReadyEvent event) {
         System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
         System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
-//        System.setProperty("webdriver.chrome.driver", path + File.separator + "driver" + File.separator + "chromedriver.exe");
         JDA jda = event.getJDA();
         Guild guild = jda.getGuildById(GUILD_ID);
 
@@ -52,8 +50,6 @@ public class MemeSupplier extends ListenerAdapter {
                 .addArguments("--no-sandbox")
                 .addArguments("--disable-dev-shm-usage");
 
-//        options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
-
         Stack<MemePair> links = new Stack<>();
 
         /*  Check for a new meme once in 60 seconds */
@@ -69,8 +65,6 @@ public class MemeSupplier extends ListenerAdapter {
 
                         WebElement page = driver.findElement(By.cssSelector("div.feed__chunk"));
                         List<WebElement> contents = page.findElements(By.cssSelector("div.content-container"));
-                        //List<WebElement> memes = page.findElements(By.cssSelector("div.andropov_image"));
-
                         for (WebElement e : contents) {
                             String memeTitle = "";
                             String memeSrc = "";
